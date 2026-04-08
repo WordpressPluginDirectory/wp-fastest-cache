@@ -402,26 +402,30 @@
 
 			if ($this->isPluginActive('elementor/elementor.php')) {
 			    // Elementor Plugin - Element Caching
-			    $new_option = get_option("elementor_element_cache_ttl");
-			    $old_option = get_option("elementor_experiment-e_element_cache");
+				$new_option = get_option('elementor_element_cache_ttl');
+				$old_option = get_option('elementor_experiment-e_element_cache');
 
-			    if ($new_option !== false) {
-			        // New version: if TTL > 0, element caching is active
-			        if ($new_option !== "disable") {
-			            return array(
-			                "You have to set the <u><a target='_blank' href='https://www.wpfastestcache.com/tutorial/elementor-plugin-settings/'>Element Caching</a></u> option of the Elementor plugin to Inactive",
-			                "error"
-			            );
-			        }
-			    } elseif ($old_option !== false) {
-			        // Old version: only check the old option if the new one does not exist
-			        if ($old_option !== "inactive") {
-			            return array(
-			                "You have to set the <u><a target='_blank' href='https://www.wpfastestcache.com/tutorial/elementor-plugin-settings/'>Element Caching</a></u> option of the Elementor plugin to Inactive",
-			                "error"
-			            );
-			        }
-			    }
+				$is_elementor_cache_inactive = false;
+
+				if ($new_option !== false) {
+
+					// New versions: element cache is active unless explicitly disabled/inactive
+				    $is_elementor_cache_inactive = in_array($new_option, ['disable', 'inactive'], true);
+
+				}elseif ($old_option !== false) {
+
+					// Old versions: element cache is active unless inactive
+				    $is_elementor_cache_inactive = ($old_option === 'inactive');
+
+				}
+
+				if (!$is_elementor_cache_inactive) {
+				    return array(
+				        "You have to set the <u><a target='_blank' href='https://www.wpfastestcache.com/tutorial/elementor-plugin-settings/'>Element Caching</a></u> option of the Elementor plugin to Inactive",
+				        "error"
+				    );
+				}
+
 
 
 			    $elementor_css_print_method_option = get_option("elementor_css_print_method");
@@ -2442,7 +2446,11 @@
 
 		            	<?php if (get_locale() === 'tr_TR') { ?>
 		            		<a href="https://apps.apple.com/tr/app/i-ngilizce-kelimeler-%C3%B6%C4%9Fren/id1492827466?l=tr" target="_blank">
-		            			<img class="visual disable-lazy" src="<?php echo plugins_url("wp-fastest-cache/images/ads/" . rand(1, 6) . ".jpg"); ?>" alt="İngilizce Kelime Öğren!" data-pin-no-hover="true">
+		            			<img class="visual disable-lazy" src="<?php echo plugins_url("wp-fastest-cache/images/ads/" . rand(1, 4) . ".jpg"); ?>" alt="İngilizce Kelime Öğren!" data-pin-no-hover="true">
+		            		</a>
+		            	<?php }else if (get_locale() === 'de_DE') { ?>
+		            		<a href="https://apps.apple.com/de/app/englische-w%C3%B6rter-lernen/id1492827466" target="_blank">
+		            			<img class="visual disable-lazy" src="<?php echo plugins_url("wp-fastest-cache/images/ads/" . rand(1, 4) . "-de.jpg"); ?>" alt="Englische Wörter Lernen" data-pin-no-hover="true">
 		            		</a>
 		            	<?php }else{ ?>
 			                <div data-variant="7361" class="sticky-common-banner">
